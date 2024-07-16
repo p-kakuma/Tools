@@ -1,0 +1,45 @@
+function setCount(sheet, val1, val2, val3, val4,val5) {
+  sheet.insertRows(2,1);
+  sheet.getRange(2, 1).setValue(new Date());
+  sheet.getRange(2, 2).setValue(val1);
+  sheet.getRange(2, 3).setValue(val2);
+  sheet.getRange(2, 4).setValue(val3);
+  sheet.getRange(2, 5).setValue(val4);
+  sheet.getRange(2, 6).setValue(val5);
+}
+
+function updateCount(sheet, val1, val2, val3, val4, val5) {
+  if (sheet.getRange(2, 2).isBlank()) {
+    sheet.getRange(2, 1).setValue(new Date());
+    sheet.getRange(2, 2).setValue(val1);
+    sheet.getRange(2, 3).setValue(val2);
+    sheet.getRange(2, 4).setValue(val3);
+    sheet.getRange(2, 5).setValue(val4);
+    sheet.getRange(2, 6).setValue(val5);
+  } else {
+    sheet.getRange(3, 1).setValue(new Date());
+    sheet.getRange(3, 2).setValue(val1);
+    sheet.getRange(3, 3).setValue(val2);
+    sheet.getRange(3, 4).setValue(val3);
+    sheet.getRange(3, 5).setValue(val4);
+    sheet.getRange(3, 6).setValue(val5);
+  }
+}
+
+function doPost(e) {
+  var sheet1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('add');
+  var sheet2 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('update');
+  var params = JSON.parse(e.postData.getDataAsString());
+  
+  // データ値追加
+  if (params.mode == 'add') {
+    setCount(sheet1, params.sendtime, params.atmpress, params.temp, params.humid, params.mac);
+  } else {
+    updateCount(sheet2, params.sendtime, params.atmpress, params.temp, params.humid, params.mac);
+  }
+  var output = ContentService.createTextOutput();
+  output.setMimeType(ContentService.MimeType.JSON);
+  output.setContent(JSON.stringify({message: "success!"}));
+
+  return output;
+}
